@@ -21,8 +21,10 @@ jobs:
                 cd backend  
                 npm install  
             
-            - name: running audit test 
-              run: npm audit --omit=dev  --audit-level=low
+            - name: running backend audit test
+              run: |
+                cd backend 
+                npm audit --omit=dev  --audit-level=low
 
             - name: Installing dependencies of frontend
               run: | 
@@ -30,7 +32,9 @@ jobs:
                 npm install 
 
             - name: audit test on frontend 
-              run: npm audit --omit=dev  --audit-level=low
+              run: |
+                  cd frontend 
+                  npm audit --omit=dev  --audit-level=low
             
     tests: 
         runs-on: ubuntu-latest 

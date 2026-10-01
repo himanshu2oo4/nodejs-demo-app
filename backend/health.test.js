@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const app = require('../server');
+const app = require('./server');
 
 test('GET /health returns ok', async () => {
   const server = app.listen(0);
