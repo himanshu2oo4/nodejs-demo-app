@@ -17,7 +17,9 @@ jobs:
               with: 
                 node-version: 20 
             - name: Installing dependencies 
-              run: npm ci 
+              run: |
+                cd backend  
+                npm ci 
             
             - name: running audit test 
               run: npm audit --omit=dev  --audit-level=high 
@@ -30,13 +32,14 @@ jobs:
               with: 
                 node-version: 20 
             - name: backend tests 
-              working-directory: backend 
               run: | 
+                cd backend 
                 npm ci 
                 npm test 
             - name: Frontend build 
-              working-directory: frontend 
-              run: npm ci && npm run build 
+              run: |
+                cd frontend  
+                npm ci && npm run build 
 
 
     Sonarqube-scan: 
