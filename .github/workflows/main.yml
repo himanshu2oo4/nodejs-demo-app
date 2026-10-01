@@ -22,7 +22,15 @@ jobs:
                 npm install  
             
             - name: running audit test 
-              run: npm audit --omit=dev  --audit-level=high 
+              run: npm audit --omit=dev  --audit-level=low
+
+            - name: Installing dependencies of frontend
+              run: | 
+                cd frontend 
+                npm install 
+
+            - name: audit test on frontend 
+              run: npm audit --omit=dev  --audit-level=low
             
     tests: 
         runs-on: ubuntu-latest 
