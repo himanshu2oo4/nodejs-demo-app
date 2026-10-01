@@ -114,14 +114,14 @@ jobs:
             - name: building and pushing the frontend Docker image
               working-directory: frontend   
               run: | 
-                docker build -t ${{env.IMAGE}}/frontend:latest .
-                docker push $${{env.IMAGE}}/frontend:latest 
+                docker build -t ${{env.IMAGE}}-frontend:latest .
+                docker push $${{env.IMAGE}}-frontend:latest 
                 
             - name: building and pushing the backend Docker image
               working-directory: backend    
               run: | 
-                docker build -t ${{env.IMAGE}}/backend:latest .
-                docker push $${{env.IMAGE}}/backend:latest 
+                docker build -t ${{env.IMAGE}}-backend:latest .
+                docker push $${{env.IMAGE}}-backend:latest 
 
         
             
