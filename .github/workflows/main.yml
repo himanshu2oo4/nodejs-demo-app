@@ -1,0 +1,112 @@
+name: CICD for a nodejs three tier application 
+on: 
+    push: 
+        branches: 
+            - main 
+    workflow_dispatch: 
+permissions: 
+    contents: read 
+jobs: 
+    npm-audit: 
+        runs-on: ubuntu-latest 
+        steps: 
+            - name: checkout code  
+              uses: actions/checkout@v4 
+            - name: setting up nodejs 
+              uses: actions/setup-node@v4 
+              with: 
+                node-version: 20 
+            - name: Installing dependencies 
+              run: npm ci 
+            
+            - name: running audit test 
+              run: npm audit --omit=dev  --audit-level=high 
+            
+    tests: 
+        runs-on: ubuntu-latest 
+        steps: 
+            - uses: actions/checkout@v4  
+            - uses: actions/setup-node@v4 
+              with: 
+                node-version: 20 
+            - name: backend tests 
+              working-directory: backend 
+              run: | 
+                npm ci 
+                npm test 
+            - name: Frontend build 
+              working-directory: frontend 
+              run: npm ci && npm run build 
+
+
+    Sonarqube-scan: 
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+          with: { fetch-depth: 0 }      # full history for accurate analysis
+        - name: SonarQube scan
+          uses: SonarSource/sonarqube-scan-action@v4
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        - name: Quality gate (fail pipeline if gate fails)
+          uses: SonarSource/sonarqube-quality-gate-action@v1
+          timeout-minutes: 5
+          env:
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+
+    trivy-fs:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+        - name: Trivy repo scan
+          uses: aquasecurity/trivy-action@v0.36.0
+          with:
+            scan-type: fs
+            scanners: vuln,secret,misconfig
+            severity: CRITICAL,HIGH
+            ignore-unfixed: true
+            exit-code: "1"
+
+    docker: 
+        needs: 
+            - npm-audit
+            - tests
+            - Sonarqube-scan 
+            - trivy-fs 
+        runs-on: ubuntu-latest 
+        env: 
+            IMAGE: ${{secrets.DOCKERHUB_USERNAME}}/three-tier
+
+        steps:
+            - uses: actions/checkout@v4 
+            - name: Login to Docker Hub
+              uses: docker/login-action@v4
+              with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+            
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v4
+            
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v4
+
+            
+            - name: building and pushing the frontend Docker image
+              working-directory: frontend   
+              run: | 
+                docker build -t ${{env.IMAGE}}/frontend:latest .
+                docker push $${{env.IMAGE}}/frontend:latest 
+                
+            - name: building and pushing the backend Docker image
+              working-directory: backend    
+              run: | 
+                docker build -t ${{env.IMAGE}}/backend:latest .
+                docker push $${{env.IMAGE}}/backend:latest 
+
+        
+            
+
