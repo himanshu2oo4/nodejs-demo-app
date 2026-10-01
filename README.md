@@ -5,21 +5,21 @@ React (Vite, served by Nginx) -> Express API -> PostgreSQL
 
 ## Run everything with Docker
 
-ENVIRONMENT VARIABLES :   put this in an .env file before running the docker compose  
-====== DATABASE TIER 3 Env vars
-
+ENVIRONMENT VARIABLES :  <br> put this in an .env file before running the docker compose  
+<br>====== DATABASE TIER 3 Env vars
+<br>
 POSTGRES_USER  , 
 POSTGRES_PASSWORD  , 
 POSTGRES_DB     <br>
 
-==== BACKEND TIER 2 ENV vars 
+==== BACKEND TIER 2 ENV vars <br>
 PORT , 
 DB_HOST , 
 DB_PORT , 
 CORS_ORIGIN  , 
 NODE_ENV
 <br>
-=== FRONTEND TIER 1 : backend connection env vars
+=== FRONTEND TIER 1 : backend connection env vars  <br>
 
 BACKEND_HOST , 
 BACKEND_PORT  , 
@@ -46,7 +46,7 @@ GET /health, GET /ready, GET/POST /api/tasks, PUT/DELETE /api/tasks/:id
 
 
 ## IN GITHUB ACTIONS CI PIPELINE 
-steps : 
+steps : <br>
     1.  NPM audits <br>
     2.  Build Tests   <br> 
     3.  SAST -> Sonarqube scan <br>
