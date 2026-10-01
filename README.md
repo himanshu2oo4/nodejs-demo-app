@@ -6,25 +6,29 @@ React (Vite, served by Nginx) -> Express API -> PostgreSQL
 ## Run everything with Docker
 
 ENVIRONMENT VARIABLES :   put this in an .env file before running the docker compose  
-# ---- Database (Tier 3) ----
-POSTGRES_USER 
-POSTGRES_PASSWORD
-POSTGRES_DB
+====== DATABASE TIER 3 Env vars
 
-# ---- Backend (Tier 2) ----
-PORT
-DB_HOST
-DB_PORT
-CORS_ORIGIN
+POSTGRES_USER  , 
+POSTGRES_PASSWORD  , 
+POSTGRES_DB     <br>
+
+==== BACKEND TIER 2 ENV vars 
+PORT , 
+DB_HOST , 
+DB_PORT , 
+CORS_ORIGIN  , 
 NODE_ENV
+<br>
+=== FRONTEND TIER 1 : backend connection env vars
 
-# ---- Frontend (Tier 1) ----
-BACKEND_HOST
-BACKEND_PORT
+BACKEND_HOST , 
+BACKEND_PORT  , 
 FRONTEND_HOST_PORT
 
+<br>
+
 ## FINALLY run     
-docker compose up --build -d
+docker compose up --build -d   <br>
 open http://localhost:8080
 
 
@@ -43,8 +47,8 @@ GET /health, GET /ready, GET/POST /api/tasks, PUT/DELETE /api/tasks/:id
 
 ## IN GITHUB ACTIONS CI PIPELINE 
 steps : 
-    1.  NPM audits
-    2.  Build Tests 
-    3.  SAST -> Sonarqube scan 
-    4.  Trivy file scan  
-    5.  Final Docker builds and Push to DockerHUB 
+    1.  NPM audits <br>
+    2.  Build Tests   <br> 
+    3.  SAST -> Sonarqube scan <br>
+    4.  Trivy file scan   <br>
+    5.  Final Docker builds and Push to DockerHUB  
