@@ -2,19 +2,32 @@
 
 React (Vite, served by Nginx) -> Express API -> PostgreSQL
 
-## Run everything with Docker
-    cp .env.example .env
-    docker compose up --build -d
-    open http://localhost:8080
 
-## Run locally without Docker (3 terminals)
-    # 1. DB
-    docker run -d --name pg -p 5432:5432 -e POSTGRES_USER=appuser -e POSTGRES_PASSWORD=changeme -e POSTGRES_DB=tasksdb \
-      -v $(pwd)/db/init.sql:/docker-entrypoint-initdb.d/init.sql postgres:16-alpine
-    # 2. Backend (DB_HOST defaults to localhost)
-    cd backend && npm install && npm start
-    # 3. Frontend (Vite proxies /api to localhost:5000)
-    cd frontend && npm install && npm run dev      # http://localhost:3000
+## Run everything with Docker
+
+ENVIRONMENT VARIABLES :   put this in an .env file before running the docker compose  
+# ---- Database (Tier 3) ----
+POSTGRES_USER 
+POSTGRES_PASSWORD
+POSTGRES_DB
+
+# ---- Backend (Tier 2) ----
+PORT
+DB_HOST
+DB_PORT
+CORS_ORIGIN
+NODE_ENV
+
+# ---- Frontend (Tier 1) ----
+BACKEND_HOST
+BACKEND_PORT
+FRONTEND_HOST_PORT
+
+## FINALLY run     
+docker compose up --build -d
+open http://localhost:8080
+
+
 
 ## Ports
 | Service  | Container | Host |
@@ -26,3 +39,12 @@ React (Vite, served by Nginx) -> Express API -> PostgreSQL
 
 ## API Endpoints 
 GET /health, GET /ready, GET/POST /api/tasks, PUT/DELETE /api/tasks/:id
+
+
+## IN GITHUB ACTIONS CI PIPELINE 
+steps : 
+    1.  NPM audits
+    2.  Build Tests 
+    3.  SAST -> Sonarqube scan 
+    4.  Trivy file scan  
+    5.  Final Docker builds and Push to DockerHUB 
